@@ -1,45 +1,93 @@
-def sacar(saldo, valor, limite_valor_saque, num_saques, limite_qtd_saque):
+class Cliente:
+    def __init__(self, endereco):
+        self.endereco = endereco
+        self.contas = []
 
-    if num_saques >= limite_qtd_saque:
-        print("Você não pode mais efetuar saques hoje o limite é de", limite_qtd_saque, "saques por dia")
-    elif valor > limite_valor_saque:
-        print("Você não pode efetuar esse saque, pois o limite para um saque é de", limite_valor_saque, "\n")
-    elif valor > saldo:
-        print("Você não possui saldo o suficiente em conta\n")
-    elif valor > 0:
-        saldo -= valor
-        num_saques += 1
-        print("Saque efetuado com sucesso")
-        print(10*"*")
-        print("Seu novo saldo é R$", saldo, "\n")
+        def fazer_transacao(self, conta, transacao):
+            transacao.registrar(conta)
 
-    else:
-        print("Saque falhou! Tente novamente")
-
-    return saldo
+        def add_conta(self, conta):
+            self.contas.append(conta)
 
 
-def depositar(saldo, deposito, extrato):
+class PessoaFisica(Cliente):
+    def __init__(self, nome, dt_nascimento, cpf, endereco):
+        super().__init__(endereco)
+        self.nome = nome
+        self.dt_nascimento = dt_nascimento
+        self.cpf = cpf
 
-    if deposito > 0:
-        saldo += deposito
-        extrato = "Depósito: R$ ", deposito, "\n"
-        print("Depósito feito com sucesso\n")
 
-    else:
-        print("Não foi possível fazer o depósito\n")
+class Conta:
+    def __init__(self, numero, cliente):
+        self._saldo = 0
+        self._numero = numero
+        self._agencia = "0001"
+        self._cliente = cliente
+        self._historico - Historico()
 
-    return saldo, extrato
+    @classmethod
+    def nova_conta(cls, cliente, numero):
+        return cls(numero, cliente)
+
+    @property
+    def saldo(self):
+        return self._saldo
+
+    @property
+    def numero(self):
+        return self._numero
+
+    @property
+    def agencia(self):
+        return self._agencia
+
+    @property
+    def cliente(self):
+        return self._cliente
+
+    @property
+    def historico(self):
+        return self._historico
+
+    def sacar(self, saldo, valor, limite_valor_saque, num_saques, limite_qtd_saque):
+
+        saldo = self.saldo
+        if num_saques >= limite_qtd_saque:
+            print("Você não pode mais efetuar saques hoje o limite é de", limite_qtd_saque, "saques por dia")
+        elif valor > limite_valor_saque:
+            print("Você não pode efetuar esse saque, pois o limite para um saque é de", limite_valor_saque, "\n")
+        elif valor > self.saldo:
+            print("Você não possui saldo o suficiente em conta\n")
+        elif valor > 0:
+            saldo -= valor
+            num_saques += 1
+            print("Saque efetuado com sucesso")
+        else:
+            print("Saque falhou! Tente novamente")
+
+        return saldo
+
+
+    def depositar(self, deposito):
+
+        if deposito > 0:
+            self._saldo += deposito
+            extrato = "Depósito: R$ ", deposito, "\n"
+            print("Depósito feito com sucesso\n")
+
+        else:
+            print("Não foi possível fazer o depósito\n")
+
+        return saldo
 
 
 def mostrar_saldo():
     return print("O seu extrato é igual a R$", saldo, "\n")
 
-
 def filtrar_user(cpf, usuarios):
     usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
     return usuarios_filtrados[0] if usuarios_filtrados else None
-
 
 def criar_user(usuarios):
     cpf = input("Informeo CPF (somente números): ")
@@ -56,7 +104,6 @@ def criar_user(usuarios):
     usuarios.append({"nome": nome, "data_nascimento": dt_nascimento, "cpf": cpf, "endereço": endereco})
     print("Usuário adicionado com sucesso!")
 
-
 def lista_contas(contas):
     for conta in contas:
         linha = f"""
@@ -65,7 +112,6 @@ def lista_contas(contas):
         Titular: {conta['usuario']['nome']}
         """
         print(linha)
-
 
 def criar_conta(agencia, num_conta, usuarios):
     cpf = input("Digite o cpf do usuário: ")
